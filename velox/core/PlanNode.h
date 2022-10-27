@@ -283,7 +283,6 @@ class ArrowStreamNode : public PlanNode {
     return arrowStream_;
   }
 
-
   memory::MemoryPool* memoryPool() const {
     return pool_;
   }
