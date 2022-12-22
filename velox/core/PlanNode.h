@@ -1162,6 +1162,12 @@ inline bool isAntiJoin(JoinType joinType) {
   return joinType == JoinType::kAnti;
 }
 
+inline bool isNullAwareSupported(core::JoinType joinType) {
+  return joinType == JoinType::kAnti ||
+      joinType == JoinType::kLeftSemiProject ||
+      joinType == JoinType::kRightSemiProject;
+}
+
 /// Abstract class representing inner/outer/semi/anti joins. Used as a base
 /// class for specific join implementations, e.g. hash and merge joins.
 class AbstractJoinNode : public PlanNode {
@@ -1279,7 +1285,13 @@ class HashJoinNode : public AbstractJoinNode {
             left,
             right,
             outputType),
-        nullAware_{nullAware} {}
+        nullAware_{nullAware} {
+    if (nullAware) {
+      VELOX_USER_CHECK(
+          isNullAwareSupported(joinType),
+          "Null-aware flag is supported only for semi and anti joins");
+    }
+  }
 
 #ifdef VELOX_ENABLE_BACKWARD_COMPATIBILITY
   HashJoinNode(
