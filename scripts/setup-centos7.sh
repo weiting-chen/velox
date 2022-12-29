@@ -52,8 +52,7 @@ function wget_and_untar {
 }
 
 function install_cmake {
-  mkdir -p cmake-3
-  wget_and_untar https://cmake.org/files/v3.25/cmake-3.25.1.tar.gz cmake-3 &
+  wget_and_untar https://cmake.org/files/v3.25/cmake-3.25.1.tar.gz cmake-3
   cd cmake-3
   ./bootstrap --prefix=/usr/local
   make -j${nproc}
@@ -83,7 +82,7 @@ function install_conda {
   mkdir -p conda && cd conda
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
   MINICONDA_PATH=/opt/miniconda-for-velox
-  sh Miniconda3-latest-Linux-x86_64.sh -b -u $MINICONDA_PATH
+  bash Miniconda3-latest-Linux-x86_64.sh -b -u $MINICONDA_PATH
 }
 
 function install_velox_deps {
