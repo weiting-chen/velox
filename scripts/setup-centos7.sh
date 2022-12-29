@@ -114,11 +114,21 @@ function install_snappy {
   cmake_install -DSNAPPY_BUILD_TESTS=OFF  
 }
 
+function install_dwarf {
+  wget_and_untar https://github.com/davea42/libdwarf-code/releases/download/v0.5.0/libdwarf-0.5.0.tar.xz dwarf
+  cd dwarf
+  ./configure --enable-shared=yes
+  make
+  make check
+  make install
+}
+
 function install_prerequisites {
   run_and_time install_openssl
   run_and_time install_gflags
   run_and_time install_glog
   run_and_time install_snappy
+  run_and_time install_dwarf
 }
 
 function install_velox_deps {
@@ -139,7 +149,7 @@ dnf_install epel-release dnf-plugins-core # For ccache, ninja
 # dnf config-manager --set-enabled powertools
 dnf_install ccache git wget which libevent-devel \
   openssl-devel re2-devel libzstd-devel lz4-devel double-conversion-devel \
-  libdwarf-devel curl-devel cmake
+  curl-devel cmake
 
 dnf remove -y gflags
 
