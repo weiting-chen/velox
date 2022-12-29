@@ -85,6 +85,30 @@ function install_conda {
   bash Miniconda3-latest-Linux-x86_64.sh -b -u $MINICONDA_PATH
 }
 
+function install_gflags {
+  wget_and_untar https://github.com/gflags/gflags/archive/v2.2.2.tar.gz gflags
+  cd gflags
+  cmake_install -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_gflags_LIB=ON -DLIB_SUFFIX=64 -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
+}
+
+function install_glog {
+  wget_and_untar https://github.com/google/glog/archive/v0.4.0.tar.gz glog
+  cd glog
+  cmake_install -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr/local  
+}
+
+function install_snappy {
+  wget_and_untar https://github.com/google/snappy/archive/1.1.8.tar.gz snappy
+  cd snappy
+  cmake_install -DSNAPPY_BUILD_TESTS=OFF  
+}
+
+function install_prerequisites {
+  run_and_time install_gflags
+  run_and_time install_glog
+  run_and_time install_snappy
+}
+
 function install_velox_deps {
   run_and_time install_fmt
   run_and_time install_folly
@@ -123,11 +147,8 @@ set -u
 
 # Build from Sources
 # Fetch sources.
-wget_and_untar https://github.com/gflags/gflags/archive/v2.2.2.tar.gz gflags &
-wget_and_untar https://github.com/google/glog/archive/v0.4.0.tar.gz glog &
 wget_and_untar http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz lzo &
 wget_and_untar https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.gz boost &
-wget_and_untar https://github.com/google/snappy/archive/1.1.8.tar.gz snappy &
 #wget_and_untar https://github.com/fmtlib/fmt/archive/8.0.0.tar.gz fmt &
 
 wait  # For cmake and source downloads to complete.
@@ -148,12 +169,9 @@ wait  # For cmake and source downloads to complete.
   ./b2 "-j$(nproc)" -d0 install threading=multi
 )
 
-# install gflags
-cmake_install gflags -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=ON -DBUILD_gflags_LIB=ON -DLIB_SUFFIX=64 -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-# install glog
-cmake_install glog -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr/local
-# install snappy
-cmake_install snappy -DSNAPPY_BUILD_TESTS=OFF
+# install prerequisites
+install_prerequisites
+
 # install fmt
 #cmake_install fmt -DFMT_TEST=OFF
 
