@@ -85,6 +85,17 @@ function install_conda {
   bash Miniconda3-latest-Linux-x86_64.sh -b -u $MINICONDA_PATH
 }
 
+function install_openssl {
+  wget_and_untar https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_1_1_1s.tar.gz openssl
+  cd openssl
+  ./config
+  make depend
+  make
+  make install
+  mv /usr/bin/openssl /usr/bin/openssl.bak
+  ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl  
+}
+
 function install_gflags {
   wget_and_untar https://github.com/gflags/gflags/archive/v2.2.2.tar.gz gflags
   cd gflags
@@ -104,6 +115,7 @@ function install_snappy {
 }
 
 function install_prerequisites {
+  run_and_time install_openssl
   run_and_time install_gflags
   run_and_time install_glog
   run_and_time install_snappy
