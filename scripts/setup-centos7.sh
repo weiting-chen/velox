@@ -103,7 +103,7 @@ function install_gflags {
 }
 
 function install_glog {
-  wget_and_untar https://github.com/google/glog/archive/v0.4.0.tar.gz glog
+  wget_and_untar https://github.com/google/glog/archive/v0.5.0.tar.gz glog
   cd glog
   cmake_install -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr/local  
 }
